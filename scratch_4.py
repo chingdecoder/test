@@ -1,1 +1,4 @@
-print("this line is for the first line of git")
+lst=[]
+for i in range(6):
+    lst+=input()
+print(str(max(lst)),(max(y for y in lst if y!=max(lst)) ) )

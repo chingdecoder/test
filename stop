@@ -1,0 +1,353 @@
+[33mcommit 33a4648ee88d5cf19c18c055532a7d68a2527707[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Ching <ndchinh2003@gmail.com>
+Date:   Mon Nov 1 07:43:49 2021 +0700
+
+    all of this are trashes
+
+[1mdiff --git a/badhangman.py b/badhangman.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c74344d[m
+[1m--- /dev/null[m
+[1m+++ b/badhangman.py[m
+[36m@@ -0,0 +1,233 @@[m
+[32m+[m[32mimport pygame,sys[m
+[32m+[m
+[32m+[m[32mclock=pygame.time.Clock()[m
+[32m+[m
+[32m+[m[32mfrom pygame.locals import *[m
+[32m+[m
+[32m+[m[32mpygame.init()[m
+[32m+[m[32mWINDOW_SIZE= (900,600)[m
+[32m+[m[32mpygame.display.set_caption("hang")[m
+[32m+[m[32mscreen=pygame.display.set_mode(WINDOW_SIZE,0,32)[m
+[32m+[m[32mcolor_light = (170,170,170)[m
+[32m+[m[32mcolor_white = (255,255,255)[m
+[32m+[m[32mhangicon=pygame.image.load("hangman.png")#1[m
+[32m+[m[32mpygame.display.set_icon(hangicon)[m
+[32m+[m[32mfont=pygame.font.SysFont(None,100)[m
+[32m+[m[32msmallfont = pygame.font.SysFont('Corbel',35)[m
+[32m+[m[32mclick=False[m
+[32m+[m[32mtext1 = smallfont.render('PLAY' , True , (255,105,180))[m
+[32m+[m[32mtext2 = smallfont.render('QUIT' , True , (255,105,180)) #and this[m
+[32m+[m[32mwrong_lst=[][m
+[32m+[m[32mrole="executioner"[m
+[32m+[m[32mkey_word=""[m
+[32m+[m[32mdef wrong_letters(a):[m
+[32m+[m[32m    global k[m
+[32m+[m[32m    if len(wrong_lst)>=6:[m
+[32m+[m[32m        pass[m
+[32m+[m[32m    elif a in wrong_lst:[m
+[32m+[m[32m        pass[m
+[32m+[m[32m    elif a not in wrong_lst:[m
+[32m+[m[32m     wrong_lst.append(a)[m
+[32m+[m
+[32m+[m[32m    pass[m
+[32m+[m[32mdef tries(number):#7[m
+[32m+[m[32m    if number==6:[m
+[32m+[m[32m        image("lives=6.png",screen,467,216)[m
+[32m+[m[32m    if number==5:[m
+[32m+[m[32m        image("lives=5.png",screen,467,216)[m
+[32m+[m[32m    if number==4:[m
+[32m+[m[32m        image("lives=4.png",screen,467,216)[m
+[32m+[m[32m    if number==3:[m
+[32m+[m[32m        image("lives=3.png",screen,467,216)[m
+[32m+[m[32m    if number==2:[m
+[32m+[m[32m        image("lives=2.png",screen,467,216)[m
+[32m+[m[32m    if number==1:[m
+[32m+[m[32m        image("lives=1.png",screen,467,216)[m
+[32m+[m[32m    if number<=0:[m
+[32m+[m[32m        image("lives=0.png",screen,467,216)[m
+[32m+[m[32mdef ending(number):#15[m
+[32m+[m[32m    end=number[m
+[32m+[m[32m    if end==1: #guesser win with more than 1 live[m
+[32m+[m[32m        image("guesser_win.png",screen,63,269)[m
+[32m+[m[32m        image("executioner_lost.png",screen,674,308)[m
+[32m+[m[32m    if end==2: #guesser win with just 1 live[m
+[32m+[m[32m        image("guesser_win2.png",screen,21,300)[m
+[32m+[m[32m        image("executioner_lost.png", screen, 674, 308)[m
+[32m+[m[32m    if end==3: #executioner win with flaws[m
+[32m+[m[32m        image("executioner_win.png",screen,674,277)[m
+[32m+[m[32m        image("guesser_lost.png",screen,61,303)[m
+[32m+[m[32m    if end==4: #executioner win with no flaws[m
+[32m+[m[32m        image("executioner_win2.png", screen, 674, 308)[m
+[32m+[m[32m        image("guesser_lost.png", screen, 61, 303)[m
+[32m+[m
+[32m+[m[32mdef image(path,surface,x,y):[m
+[32m+[m[32m    load=pygame.image.load(path)[m
+[32m+[m[32m    surface.blit(load,(x,y))[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef draw_text(text, font, color, surface, x, y): #i copied this[m
+[32m+[m[32m    textobj = font.render(text, 1, color)[m
+[32m+[m[32m    textrect = textobj.get_rect()[m
+[32m+[m[32m    textrect.topleft = (x, y)[m
+[32m+[m[32m    surface.blit(textobj, textrect)[m
+[32m+[m[32m#that's why there r two way to print out texts, so yea:)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef main_menu():[m
+[32m+[m[32m  click=False[m
+[32m+[m[32m  while True:[m
+[32m+[m[32m    screen.fill((0,0,0))[m
+[32m+[m[32m    #guesser: 61,303; guesser_win2: 21,300[m
+[32m+[m[32m    mx,my=pygame.mouse.get_pos()[m
+[32m+[m[32m    button_1=pygame.Rect(320,100,200,50)[m
+[32m+[m[32m    button_2 = pygame.Rect(320, 170, 200, 50)[m
+[32m+[m[32m    if button_1.collidepoint((mx,my)):[m
+[32m+[m[32m        if click:[m
+[32m+[m[32m            play()[m
+[32m+[m[32m    if button_2.collidepoint((mx,my)):[m
+[32m+[m[32m        if click:[m
+[32m+[m[32m            pygame.quit()[m
+[32m+[m[32m            sys.exit()[m
+[32m+[m[32m    pygame.draw.rect(screen, color_light, button_1)[m
+[32m+[m[32m    pygame.draw.rect(screen, color_light, button_2)[m
+[32m+[m[32m    draw_text("hang man", font, (255,255,255), screen,250,20)[m
+[32m+[m[32m    draw_text("PLAY",smallfont, (255,105,180), screen,380,110)[m
+[32m+[m[32m    draw_text("QUIT",smallfont, (255,105,180), screen,380,180)[m
+[32m+[m[32m    click = False[m
+[32m+[m[32m    for event in pygame.event.get():[m
+[32m+[m[32m        if event.type==QUIT:[m
+[32m+[m[32m            pygame.quit()[m
+[32m+[m[32m            sys.exit()[m
+[32m+[m[32m        if event.type == KEYDOWN:[m
+[32m+[m[32m            if event.key == K_ESCAPE:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m        if event.type==MOUSEBUTTONDOWN:[m
+[32m+[m[32m            if event.button==1:[m
+[32m+[m[32m               click=True[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    pygame.display.update()[m
+[32m+[m[32m    clock.tick(10)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef play():[m
+[32m+[m[32m  global key_word[m
+[32m+[m[32m  running=True[m
+[32m+[m[32m  while running:[m
+[32m+[m[32m      screen.fill((0,0,0))[m
+[32m+[m[32m      draw_text("waiting for other player...", font, (255, 255, 255), screen,20, 250)[m
+[32m+[m[32m      text_surface=smallfont.render(key_word,True,color_white)[m
+[32m+[m[32m      if role=="guesser":[m
+[32m+[m[32m          draw_text("you're the guesser",smallfont,color_white,screen, 50, 320)[m
+[32m+[m[32m          draw_text("please wait for the executioner to type in the word", smallfont, color_white, screen, 50, 370)[m
+[32m+[m[32m      if role=="executioner":[m
+[32m+[m[32m          draw_text("you're the executioner",smallfont,color_white,screen,50,320)[m
+[32m+[m[32m          draw_text("please, type the keyword:",smallfont,color_white,screen,50,370)[m
+[32m+[m[32m          screen.blit(text_surface,(420,370))[m
+[32m+[m[32m      for event in pygame.event.get():[m
+[32m+[m[32m          if event.type == QUIT:[m
+[32m+[m[32m              pygame.quit()[m
+[32m+[m[32m              sys.exit()[m
+[32m+[m[32m          if event.type == KEYDOWN:[m
+[32m+[m[32m              if event.key == K_ESCAPE:[m
+[32m+[m[32m                  running = False[m
+[32m+[m[32m              if event.key== K_KP_ENTER or event.key==K_RETURN:#press enter to join the game for testing[m
+[32m+[m[32m                  hangman()[m
+[32m+[m[32m              if event.key==K_BACKSPACE:[m
+[32m+[m[32m                  key_word = key_word[:-1][m
+[32m+[m[32m              else:[m
+[32m+[m[32m                  key_word+=event.unicode.upper()[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m      pygame.display.update()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef hangman():[m
+[32m+[m[32m    global key_word, wrong_lst[m
+[32m+[m[32m    state=True[m
+[32m+[m[32m    a=""[m
+[32m+[m[32m    running = True[m
+[32m+[m[32m    click=False[m
+[32m+[m[32m    game="start"[m
+[32m+[m[32m    b=a[m
+[32m+[m[32m    list_keyword=list(key_word)[m
+[32m+[m[32m    while running:[m
+[32m+[m[32m        blank=[][m
+[32m+[m[32m        f=183[m
+[32m+[m[32m        k=180[m
+[32m+[m[32m        lives = 6[m
+[32m+[m[32m        screen.fill((0, 0, 0))[m
+[32m+[m[32m        mx, my = pygame.mouse.get_pos()[m
+[32m+[m[32m        button = pygame.Rect(660, 20, 210, 50)[m
+[32m+[m[32m        if button.collidepoint((mx, my)):[m
+[32m+[m[32m            if click:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m        pygame.draw.rect(screen, color_light, button)[m
+[32m+[m[32m        draw_text("EXIT", smallfont, (255, 105, 180), screen, 730, 30)[m
+[32m+[m[32m        image("board.png", screen, 155, 114)#16[m
+[32m+[m[32m        lives-=len(wrong_lst)[m
+[32m+[m
+[32m+[m[32m        tries(lives)[m
+[32m+[m
+[32m+[m[32m        if state==True and a.isalpha()==True:[m
+[32m+[m[32m            if a not in list_keyword:[m
+[32m+[m[32m             print(a)[m
+[32m+[m[32m             print(list_keyword)[m
+[32m+[m[32m             wrong_letters(a)[m
+[32m+[m[32m             state=False[m
+[32m+[m[32m            if a in list_keyword:[m
+[32m+[m[32m                lives+=0[m
+[32m+[m
+[32m+[m[32m        for i in wrong_lst:[m
+[32m+[m[32m                draw_text(i, smallfont, color_white, screen, k, 303)[m
+[32m+[m[32m                k += 30[m
+[32m+[m[32m        for i in range(len(list_keyword)):[m
+[32m+[m[32m            if len(blank)<=len(list_keyword):[m
+[32m+[m[32m                blank.append("_")[m
+[32m+[m[32m        for i in blank:[m
+[32m+[m[32m            print(blank)[m
+[32m+[m[32m            draw_text("_",smallfont,color_white,screen,f,150)[m
+[32m+[m[32m            f+=25[m
+[32m+[m[32m        if game=="start":[m
+[32m+[m[32m         image("guesser.png",screen,61,303)[m
+[32m+[m[32m         image("executioner.png", screen, 674, 308)[m
+[32m+[m[32m        if game=="finish":[m
+[32m+[m[32m            ending(1)[m
+[32m+[m[32m            button_3 = pygame.Rect(20, 20, 210, 50)[m
+[32m+[m[32m            if button_3.collidepoint((mx, my)):[m
+[32m+[m[32m                if click:[m
+[32m+[m[32m                    lives = 6[m
+[32m+[m[32m                    wrong_lst = [][m
+[32m+[m[32m                    key_word = ""[m
+[32m+[m[32m                    play()[m
+[32m+[m[32m            pygame.draw.rect(screen, color_light, button_3)[m
+[32m+[m[32m            draw_text("RETRY", smallfont, (255, 105, 180), screen, 70, 20)[m
+[32m+[m[32m        if lives == 0:[m
+[32m+[m[32m                game = "finish"[m
+[32m+[m[32m        for event in pygame.event.get():[m
+[32m+[m[32m            if event.type == QUIT:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m            if event.type == KEYDOWN:[m
+[32m+[m[32m                if event.key == K_ESCAPE :[m
+[32m+[m[32m                    running = False[m
+[32m+[m[32m                if event.key==K_2:[m
+[32m+[m[32m                    lives-=1[m
+[32m+[m[32m                a = event.unicode.upper()[m
+[32m+[m
+[32m+[m[32m                if a!=b:[m
+[32m+[m[32m                 b=a[m
+[32m+[m[32m                 state=True[m
+[32m+[m
+[32m+[m[32m                pass[m
+[32m+[m[32m            if event.type == MOUSEBUTTONDOWN:[m
+[32m+[m[32m                if event.button == 1:[m
+[32m+[m[32m                    click = True[m
+[32m+[m[32m        pygame.display.update()[m
+[32m+[m[32m        clock.tick(10)[m
+[32m+[m[32mmain_menu()[m
+[32m+[m
+[32m+[m
+[1mdiff --git a/board.png b/board.png[m
+[1mnew file mode 100644[m
+[1mindex 0000000..8c66545[m
+Binary files /dev/null and b/board.png differ
+[1mdiff --git a/diff.py b/diff.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..7ee1b58[m
+[1m--- /dev/null[m
+[1m+++ b/diff.py[m
+[36m@@ -0,0 +1,115 @@[m
+[32m+[m
+[32m+[m[32mimport pygame,sys[m
+[32m+[m[32mclock=pygame.time.Clock()[m
+[32m+[m[32mfrom pygame.locals import *[m
+[32m+[m[32mpygame.init()[m
+[32m+[m[32mWINDOW_SCREEN=(900,600)[m
+[32m+[m[32mscreen=pygame.display.set_mode(WINDOW_SCREEN,0,32)[m
+[32m+[m[32mpygame.display.set_caption("hanghang")[m
+[32m+[m[32mcolour_white=(255,255,255)[m
+[32m+[m[32mcolour_gray=(170,170,170)[m
+[32m+[m[32msmallfont = pygame.font.SysFont('Corbel',35)[m
+[32m+[m[32mfont=pygame.font.SysFont(None,100)[m
+[32m+[m[32mnotif="im gey"[m
+[32m+[m[32mkeyword="top top"[m
+[32m+[m
+[32m+[m[32mL1=pygame.image.load("lives=0.png")[m
+[32m+[m[32mL2=pygame.image.load("lives=1.png")[m
+[32m+[m[32mL3=pygame.image.load("lives=2.png")[m
+[32m+[m[32mL4=pygame.image.load("lives=3.png")[m
+[32m+[m[32mL5=pygame.image.load("lives=4.png")[m
+[32m+[m[32mL6=pygame.image.load("lives=5.png")[m
+[32m+[m[32mL7=pygame.image.load("lives=6.png")[m
+[32m+[m
+[32m+[m[32mdef tries(lives):[m
+[32m+[m[32m    cmd="screen.blit(L"+str(lives)+",(600,200))"[m
+[32m+[m[32m    eval(cmd)[m
+[32m+[m[32mdef mẫu():[m
+[32m+[m[32m while True:[m
+[32m+[m[32m    screen.fill((0,0,0))[m
+[32m+[m[32m    for event in pygame.event.get():[m
+[32m+[m[32m        if event.type==QUIT:[m
+[32m+[m[32m         pygame.quit()[m
+[32m+[m[32m         sys.exit()[m
+[32m+[m[32m        if event.type==KEYDOWN:[m
+[32m+[m[32m            if event.key==K_ESCAPE:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m    pygame.display.update()[m
+[32m+[m[32m    clock.tick(10)[m
+[32m+[m
+[32m+[m[32mdef draw_text(text, font, color, surface, x, y):  # i copied this[m
+[32m+[m[32m        textobj = font.render(text, 1, color)[m
+[32m+[m[32m        textrect = textobj.get_rect()[m
+[32m+[m[32m        textrect.topleft = (x, y)[m
+[32m+[m[32m        surface.blit(textobj, textrect)[m
+[32m+[m[32mdef main_menu():[m
+[32m+[m[32m  click=False[m
+[32m+[m[32m  while True:[m
+[32m+[m[32m    screen.fill((0,0,0))[m
+[32m+[m[32m    #guesser: 61,303; guesser_win2: 21,300[m
+[32m+[m[32m    mx,my=pygame.mouse.get_pos()[m
+[32m+[m[32m    button_1=pygame.Rect(320,100,200,50)[m
+[32m+[m[32m    button_2 = pygame.Rect(320, 170, 200, 50)[m
+[32m+[m[32m    if button_1.collidepoint((mx,my)):[m
+[32m+[m[32m        if click:[m
+[32m+[m[32m            play()[m
+[32m+[m[32m    if button_2.collidepoint((mx,my)):[m
+[32m+[m[32m        if click:[m
+[32m+[m[32m            pygame.quit()[m
+[32m+[m[32m            sys.exit()[m
+[32m+[m[32m    pygame.draw.rect(screen, colour_gray, button_1)[m
+[32m+[m[32m    pygame.draw.rect(screen, colour_gray, button_2)[m
+[32m+[m[32m    draw_text("hang man", font, (255,255,255), screen,250,20)[m
+[32m+[m[32m    draw_text("PLAY",smallfont, (255,105,180), screen,380,110)[m
+[32m+[m[32m    draw_text("QUIT",smallfont, (255,105,180), screen,380,180)[m
+[32m+[m[32m    click = False[m
+[32m+[m[32m    for event in pygame.event.get():[m
+[32m+[m[32m        if event.type==QUIT:[m
+[32m+[m[32m            pygame.quit()[m
+[32m+[m[32m            sys.exit()[m
+[32m+[m[32m        if event.type == KEYDOWN:[m
+[32m+[m[32m            if event.key == K_ESCAPE:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m        if event.type==MOUSEBUTTONDOWN:[m
+[32m+[m[32m            if event.button==1:[m
+[32m+[m[32m               click=True[m
+[32m+[m[32m    pygame.display.update()[m
+[32m+[m[32m    clock.tick(10)[m
+[32m+[m[32mdef play():[m
+[32m+[m[32m    click=False #click assigned to prevent bugs[m
+[32m+[m[32m    while True:[m
+[32m+[m[32m        lives=7[m
+[32m+[m[32m        screen.fill((0, 0, 0))[m
+[32m+[m[32m        draw_text(notif, smallfont, colour_white, screen, 20, 20)[m
+[32m+[m[32m        draw_text(keyword,smallfont,colour_gray,screen,200,250)[m
+[32m+[m[32m        tries(lives)[m
+[32m+[m[32m        #exit button[m
+[32m+[m[32m        #--------------------------------------------------------------[m
+[32m+[m[32m        mx, my = pygame.mouse.get_pos()[m
+[32m+[m[32m        button = pygame.Rect(660, 20, 210, 50)[m
+[32m+[m[32m        if button.collidepoint((mx, my)):[m
+[32m+[m[32m            if click:[m
+[32m+[m[32m                pygame.quit()[m
+[32m+[m[32m                sys.exit()[m
+[32m+[m[32m        #--------------------------------------------------------------[m
+[32m+[m[32m        pygame.draw.rect(screen, colour_gray, button)[m
+[32m+[m[32m        draw_text("EXIT", smallfon
